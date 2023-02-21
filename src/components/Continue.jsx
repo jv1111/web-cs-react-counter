@@ -1,7 +1,17 @@
+import React from "react";
+import { useRef, useState } from "react";
+import Countdown from "react-countdown";
 
-const Continuous = () => {
+const Continue = ({ timer }) => {
     const countdownRef = useRef(null);//will be used to access the methods or api
-    const [key, setKey] = useState(1);//will be used to reset
+    let dateEnd = null;
+    // get the setted dateEnd
+    if (localStorage.getItem('remainingTime')) {
+        const remainingTime = parseInt(localStorage.getItem('remainingTime'))
+        dateEnd = Date.now() + remainingTime;
+    } else {
+        dateEnd = Date.now() + timer;
+    }
 
     const Completionist = () => <span>You are good to go!</span>;
 
@@ -13,6 +23,8 @@ const Continuous = () => {
             hours = formatter(hours);
             minutes = formatter(minutes);
             seconds = formatter(seconds);
+            console.log(dateEnd - Date.now());
+            localStorage.setItem('remainingTime', (dateEnd - Date.now()))
             // Render a countdown
             return <span>{hours}:{minutes}:{seconds}</span>;
         }
@@ -29,8 +41,7 @@ const Continuous = () => {
         <>
             <Countdown
                 ref={countdownRef}
-                date={Date.now() + 65000}
-                key={key}
+                date={dateEnd}
                 autoStart={false}
                 renderer={renderer}
             />
@@ -40,14 +51,8 @@ const Continuous = () => {
             >
                 start
             </button>
-
-            <button
-                onClick={() => setKey(prev => prev + 1)}
-            >
-                reset
-            </button>
         </>
     )
 }
 
-export default Continuous;
+export default Continue;
